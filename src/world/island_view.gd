@@ -3,7 +3,8 @@ extends Node3D
 ## Draws a replay's real terrain, sea, sites and hazards. Where a hazard is always comes from the replay.
 
 const UNITS_PER_METRE := 0.01
-const SEA_FLOOR_M := -30.0
+const SEA_FLOOR_M := -400.0
+const SEABED := Color(0.03, 0.14, 0.22)
 const SEA_SIZE_UNITS := 4000.0
 const SITE_SIZE_UNITS := 2.0
 const ASH_FULL_KG_M2 := 100.0
@@ -133,7 +134,7 @@ func _normal_at(surface: PackedVector3Array, nx: int, ny: int, row: int, col: in
 
 func _ground_colour(height: float, is_land: bool) -> Color:
 	if not is_land:
-		return SAND.darkened(0.45)
+		return SEABED
 	if height < SAND_TOP_M:
 		return SAND.lerp(GRASS, height / SAND_TOP_M)
 	if height < FOREST_TOP_M:
@@ -245,6 +246,6 @@ func _show_column(step: int) -> void:
 	if not _column.visible:
 		return
 	var vent := ground_at(Vector2(vents[0][0], vents[0][1]))
-	var height_units := height_m * UNITS_PER_METRE * vertical_exaggeration
+	var height_units := height_m * UNITS_PER_METRE  # The column is drawn at its true height. Only the ground is exaggerated.
 	_column.position = vent + Vector3.UP * height_units * 0.5
 	_column.scale = Vector3(1.0, height_units, 1.0)

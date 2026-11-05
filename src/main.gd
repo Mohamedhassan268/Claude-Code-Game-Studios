@@ -146,5 +146,5 @@ func _take_shot(path: String) -> void:
 		await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	get_viewport().get_texture().get_image().save_png(path)
-	print("Saved %s, %.0f frames per second" % [path, Engine.get_frames_per_second()])
+	print("Saved %s" % path)
 	get_tree().quit()
