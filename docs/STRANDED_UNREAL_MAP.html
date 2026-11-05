@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stranded Unreal Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: a field manual. A narrow reading column, with wide tables, and a stripe on each phase showing whether it makes the first playable. */
+:root {
+  --ink: #16242b;
+  --muted: #55676f;
+  --paper: #f5f7f6;
+  --panel: #ffffff;
+  --rule: #cfd9d9;
+  --sea: #0d6275;
+  --ember: #b5471b;
+  --good: #2c7a4b;
+  --display: "Archivo", "Arial Narrow", Arial, sans-serif;
+  --body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  --mono: "JetBrains Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ink: #e5eded; --muted: #9db0b4; --paper: #10191d; --panel: #18242a; --rule: #2f4047; --sea: #5cc2d6; --ember: #f0935f; --good: #6dcb93;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e5eded; --muted: #9db0b4; --paper: #10191d; --panel: #18242a; --rule: #2f4047; --sea: #5cc2d6; --ember: #f0935f; --good: #6dcb93;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.55 var(--body); }
+main { max-width: 1020px; margin: 0 auto; padding: 32px 20px 72px; display: grid; gap: 40px; }
+section { display: grid; gap: 14px; min-width: 0; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: 40px; font-weight: 800; }
+h2 { font-size: 26px; font-weight: 800; color: var(--sea); padding-top: 12px; border-top: 2px solid var(--rule); }
+h3 { font-size: 18px; font-weight: 700; }
+p, ul, ol { margin: 0; max-width: 72ch; }
+ul, ol { padding-left: 22px; display: grid; gap: 5px; }
+.lede { font-size: 20px; line-height: 1.45; max-width: 62ch; }
+.muted { color: var(--muted); }
+a { color: var(--sea); }
+a:focus-visible { outline: 3px solid var(--ember); outline-offset: 2px; }
+code { font: 400 .86em var(--mono); overflow-wrap: anywhere; }
+pre { margin: 0; padding: 14px 16px; background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; overflow-x: auto; font: 400 13.5px/1.5 var(--mono); }
+pre code { font: inherit; overflow-wrap: normal; }
+.table { overflow-x: auto; border: 1px solid var(--rule); border-radius: 4px; background: var(--panel); }
+table { border-collapse: collapse; width: 100%; font-size: 15.5px; font-variant-numeric: tabular-nums; }
+th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--rule); }
+tr:last-child td { border-bottom: 0; }
+th { font-family: var(--display); font-size: 13.5px; font-weight: 700; color: var(--muted); }
+td:first-child { font-weight: 600; }
+.phases { display: grid; gap: 12px; }
+.phase { background: var(--panel); border: 1px solid var(--rule); border-left: 5px solid var(--sea); border-radius: 4px; padding: 14px 18px; display: grid; gap: 8px; }
+.phase.later { border-left-color: var(--ember); }
+.phase header { display: flex; flex-wrap: wrap; gap: 4px 14px; align-items: baseline; justify-content: space-between; }
+.tag { font: 600 13px var(--mono); color: var(--muted); white-space: nowrap; }
+.done { color: var(--good); font-weight: 700; }
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.box { background: var(--panel); border: 1px solid var(--rule); border-radius: 4px; padding: 12px 14px; display: grid; gap: 4px; align-content: start; }
+.box strong { font-family: var(--display); }
+.note { border-left: 5px solid var(--ember); background: var(--panel); padding: 12px 16px; border-radius: 0 4px 4px 0; display: grid; gap: 6px; }
+@media (max-width: 720px) { h1 { font-size: 32px; } .flow { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+
+<header style="display:grid;gap:12px">
+  <h1>Stranded in Unreal Engine, from A to Z</h1>
+  <p class="lede">Muammel, this is your handover. You'll build the 3D game in Unreal: our existing simulation and quantum mind, inside a game that plays like The Sims 4, with a free camera, people with needs, and a menu of actions.</p>
+  <p class="muted">Written 5 November 2026 by Mohamed, with Claude. The 6 November judging uses the existing notebook, slides and pygame window, so this game isn't needed for it. Times are rough estimates for one full-time person using AI tools. The Unreal steps come from Epic's documentation and general knowledge, and nobody has run them on this project yet.</p>
+</header>
+
+<section>
+  <h2>Start here</h2>
+  <ol>
+    <li>Check your PC against <a href="#phases">Phase 0</a>. If it falls short, tell Mohamed before installing anything.</li>
+    <li>Get the 268 MB <code>artifacts</code> folder from Mohamed. No scenario runs without it.</li>
+    <li>Read <a href="#science">Rules that protect the science</a>. Those rules don't bend for gameplay.</li>
+    <li>Build Phases 1 to 5 in order. That's the first version worth showing people.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>What's ready for you today</h2>
+  <div class="table"><table>
+    <thead><tr><th>Piece</th><th>State</th><th>Where</th></tr></thead>
+    <tbody>
+      <tr><td>Simulation, minds, Titanic</td><td>Working, with honest results listed under the science rules</td><td><a href="https://github.com/Muammal/Qiskit-Fest-Qognition/tree/game">Qiskit-Fest-Qognition, branch <code>game</code></a></td></tr>
+      <tr><td>Replay exporter</td><td><strong>Still being built.</strong> Codex is working on it against a test checker, and it isn't on the branch yet. Mohamed will tell you when it arrives</td><td>Will be <code>stranded_game/</code> on that branch</td></tr>
+      <tr><td>Godot prototype</td><td>Pushed, with 8 tests passing on a small test file. It hasn't played a real scenario yet. Use it as a reference for structure and screens, and don't port it line by line</td><td><a href="https://github.com/Mohamedhassan268/Claude-Code-Game-Studios/tree/game">Claude-Code-Game-Studios fork, branch <code>game</code></a></td></tr>
+      <tr><td>Studio tools</td><td>Forked. The hooks were read, and the only network call found is an update check to GitHub's public API</td><td><a href="https://github.com/Mohamedhassan268/Claude-Code-Game-Studios">The same fork</a></td></tr>
+      <tr><td>Music generator</td><td>Forked, not installed or tested</td><td><a href="https://github.com/Mohamedhassan268/ACE-Step-1.5">ACE-Step-1.5 fork</a></td></tr>
+      <tr><td>Unreal project</td><td>Not started. It's yours</td><td>A new repo, see Phase 0</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="decisions">
+  <h2>Decisions already made</h2>
+  <div class="table"><table>
+    <thead><tr><th>Decision</th><th>Choice</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Simulation</td><td>Stays in Python. Unreal only displays it and sends the player's choices</td><td>The science, gates and tests live in Python. Rewriting them in C++ would lose that.</td></tr>
+      <tr><td>Order of work</td><td>Replay first, then live play</td><td>Replay proves the art, camera and screens without any networking.</td></tr>
+      <tr><td>Engine version</td><td>The latest Unreal Engine 5.8 hotfix</td><td>Epic describes 5.8 as the final planned major UE5 release. Stay on it for this project.</td></tr>
+      <tr><td>The Sims' own material</td><td>Never used: no logo, plumbob, characters, music or Simlish</td><td>They belong to Electronic Arts. Copying how a game plays is normal. Copying its art isn't.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>What "plays like The Sims 4" means here</h2>
+  <div class="table"><table>
+    <thead><tr><th>Sims feature</th><th>In Stranded</th><th>Data comes from</th></tr></thead>
+    <tbody>
+      <tr><td>Orbit, zoom and pan camera</td><td>Same controls, over the island or ship</td><td>New</td></tr>
+      <tr><td>Needs panel</td><td>Hunger, thirst, warmth, energy, safety, morale, plus stress</td><td><code>needs</code>, <code>stress</code></td></tr>
+      <tr><td>Marker over the selected person</td><td>Our own design, coloured by mood</td><td>New art, driven by needs and stress</td></tr>
+      <tr><td>Thought bubble</td><td>The mind's reason, and a small bar for each option it weighed. This is where the quantum mind shows on screen</td><td><code>reason</code>, <code>probs</code></td></tr>
+      <tr><td>Click something, choose from a round menu</td><td>The seven actions: forage, drink, build shelter, rest, explore, craft, hide</td><td><code>contracts.ACTIONS</code></td></tr>
+      <tr><td>Action queue</td><td>Queued choices replace the mind's for those steps</td><td>Live bridge, Phase 6</td></tr>
+      <tr><td>Free Will on or off</td><td>On: the mind decides when the queue is empty. Off: the person waits for orders</td><td>Live bridge, Phase 6</td></tr>
+      <tr><td>Pause and three speeds</td><td>Same. One step of 2 hours (island) or 10 minutes (ship) plays over a set number of real seconds</td><td><code>step_minutes</code></td></tr>
+      <tr><td>Switch between household members</td><td>Switch between people in the scenario</td><td><code>people</code></td></tr>
+      <tr><td>Build mode</td><td>The scenario builder: place eruptions, shelters, people and so on</td><td>Live bridge, Phase 8</td></tr>
+      <tr><td>Choosing a world</td><td>Choosing a scenario</td><td><code>stranded_physics/scenario_cards/</code></td></tr>
+      <tr><td>Create a Sim</td><td>Left out. Pick from a few characters and colours</td><td>Too expensive for what it adds</td></tr>
+    </tbody>
+  </table></div>
+  <div class="note">
+    <h3>The scale problem, which you must design around</h3>
+    <p>A Sims lot is a house and garden, with time moving in minutes. St Vincent's terrain is 270 by 397 cells of 90 m, so about 24 by 36 km, and a person there acts once every 2 hours, over 48 steps. A person drawn to scale would be invisible and could cross several kilometres in one step.</p>
+    <p>The answer is two zoom levels. <strong>World view</strong> shows the real terrain, hazards and everyone's real positions. <strong>Camp view</strong> zooms into a small dressed area around the selected person, with their shelter, fire and supplies, so that eating or building looks right. Camp view is decoration only and feeds nothing back to the simulation. The ship is much closer to Sims scale, with a 7 m deck grid and 10-minute steps.</p>
+  </div>
+</section>
+
+<section>
+  <h2>How the pieces fit</h2>
+  <div class="flow">
+    <div class="box"><strong>Python simulation</strong><span>Existing. <code>PackSimulation</code>, <code>play_people</code>, <code>play_ship</code>, and the minds. The only source of truth.</span></div>
+    <div class="box"><strong>Bridge, in Python</strong><span>Mohamed's side, using Codex. <code>stranded_game/</code> writes replay files, and later serves live play on <code>127.0.0.1</code>.</span></div>
+    <div class="box"><strong>Unreal game, yours</strong><span>Reads a replay or talks to the live bridge. Draws everything. Holds no simulation rules.</span></div>
+  </div>
+  <p>The two formats further down are the agreement between you and Mohamed. If you need a change, ask for it rather than working around it, and it gets a new schema number.</p>
+</section>
+
+<section id="phases">
+  <h2>The phases</h2>
+  <p>Each phase ends with a check. Don't start the next phase until it passes. Blue makes the first playable version. Orange is everything after that.</p>
+  <div class="phases">
+
+    <article class="phase">
+      <header><h3>0. Machine and project</h3><span class="tag">1 day</span></header>
+      <ul>
+        <li><strong>PC:</strong> Epic recommends Windows 11, a quad-core 2.5 GHz or faster CPU, 32 GB of RAM, a DirectX 12 card with 8 GB or more of video memory, and Lumen needs an RTX 2000 series, RX 6000 or newer. Epic's page gives no disk figure, so leave plenty of room on an SSD.</li>
+        <li><strong>Install:</strong> Epic Games Launcher, Unreal Engine 5.8, and Visual Studio 2026, set up using Epic's "Setting Up Visual Studio" page.</li>
+        <li><strong>Python side:</strong> clone the team repo's <code>game</code> branch, make a <code>.venv</code> from <code>requirements.txt</code> and <code>requirements-physics.txt</code>, and link the <code>artifacts</code> folder into the checkout root.</li>
+        <li><strong>Repo:</strong> make a new repo for the Unreal project from the <a href="https://github.com/Donchitos/Claude-Code-Game-Studios">Claude Code Game Studios template</a>, because our fork's <code>game</code> branch is set up for Godot. Add Unreal's <code>.gitignore</code> and Git LFS for binary assets. Check your LFS allowance first, since Unreal projects get large. If it runs out, use Perforce.</li>
+        <li><strong>Studio setup:</strong> run Claude Code from the repo's root, because hooks are skipped from a subfolder. Run <code>/setup-engine unreal 5.8</code> and keep <code>modes.rigor</code> on <code>minimal</code>. On the template's own test, <code>standard</code> wrote 30 documents before the first line of code and didn't produce a better game. The tool won't create the Unreal project for you, so create a C++ project in the editor.</li>
+      </ul>
+      <p><span class="done">Done when:</span> <code>python -m stranded_physics.entities.build run stranded_physics/scenario_cards/generated_eruption.toml</code> prints a result, and the empty Unreal project builds from Visual Studio and opens.</p>
+    </article>
+
+    <article class="phase">
+      <header><h3>1. Load the replay</h3><span class="tag">2 days, good for Codex</span></header>
+      <ul>
+        <li>Add a C++ game instance subsystem, <code>UStrandedReplaySubsystem</code>, that reads the JSON file below with Unreal's <code>Json</code> module.</li>
+        <li>Decode arrays with <code>FBase64::Decode</code>, then <code>FCompression::UncompressMemory</code> with <code>NAME_Zlib</code>, then read little-endian floats.</li>
+        <li>Test against <code>tests/fixtures/tiny_replay.json</code> in the Godot fork. It was written with Python's zlib, and <code>tests/unit/test_replay.gd</code> holds the expected values, so you can copy those tests.</li>
+        <li>Add a <code>Playback</code> class: pause, three speeds, seek, and stopping at the end.</li>
+      </ul>
+      <p><span class="done">Done when:</span> Unreal Automation Tests reproduce every value in <code>test_replay.gd</code>, including elevation between cells and hazard frames that hold until the next change.</p>
+    </article>
+
+    <article class="phase">
+      <header><h3>2. World view</h3><span class="tag">3 days</span></header>
+      <ul>
+        <li><strong>Heightmap:</strong> Unreal's Landscape imports 16-bit images at set sizes, listed in Epic's Landscape documentation, so ask Mohamed for an export at your chosen size. Height scale is about <code>100 × height range in metres ÷ 512</code>.</li>
+        <li><strong>Coordinates:</strong> Unreal uses centimetres. Use <code>X = (x_m − x0_m) × 100</code>, <code>Y = (y0_m − y_m) × 100</code>, <code>Z = height_m × 100</code>. That puts east at +X and south at +Y, which fits Unreal's left-handed axes. Check this first, because a mirrored island is an easy mistake to make.</li>
+        <li><strong>Sea and light:</strong> Water plugin or a simple plane, and a sun driven by the replay's hour.</li>
+        <li><strong>Camera:</strong> a pawn with a spring arm and Enhanced Input. WASD or middle mouse to pan, right mouse or Q and E to orbit, wheel to zoom. See <code>src/world/camera_rig.gd</code> for the Godot version.</li>
+        <li><strong>Performance:</strong> test early on the slowest PC you must support. Mohamed's has a GTX 1050 with 4 GB, well below Epic's recommendation, and may not run this at all. Try turning off Lumen and Nanite, or the Lumen Lite option reported in 5.8.</li>
+      </ul>
+      <p><span class="done">Done when:</span> St Vincent is recognisable and the right way round, the camera works by hand, and it holds 30 frames per second on the target PC.</p>
+    </article>
+
+    <article class="phase">
+      <header><h3>3. People and playback</h3><span class="tag">4 days, art is the slow part</span></header>
+      <ul>
+        <li>Import a rigged character, and use IK Retargeter to apply one animation set.</li>
+        <li>Build an Animation Blueprint with a state for each action, plus injured and dead.</li>
+        <li>Move people along <code>path_m</code>, evenly through each step, snapped to the ground. Start with one step taking about 8 seconds at normal speed, then tune it by playing.</li>
+        <li>Scale people up with camera distance in World view so they stay visible.</li>
+      </ul>
+      <p><span class="done">Done when:</span> one person's whole <code>generated_eruption</code> run plays with the right animation at each step, they never walk across the sea, and scrubbing back gives the same picture.</p>
+    </article>
+
+    <article class="phase">
+      <header><h3>4. Hazards on the map</h3><span class="tag">2 days</span></header>
+      <p>Turn <code>tephra.deposit_load</code> and <code>pdc.active</code> frames into transient textures, and blend them into the Landscape material as ash and glowing flow. Add a basic eruption column from <code>eruption.column_height</code>. See <code>src/world/terrain.gdshader</code> for the idea.</p>
+      <p><span class="done">Done when:</span> in a test frame, the drawn flow matches the replay's <code>pdc.active</code>, and a person dies only when their record says so.</p>
+    </article>
+
+    <article class="phase">
+      <header><h3>5. Sims-style screen</h3><span class="tag">3 days</span></header>
+      <ul>
+        <li>With UMG and CommonUI: needs panel, mood marker, thought bubble with option bars, event messages, person switcher, timeline and end-of-run summary.</li>
+        <li>A permanent evidence banner showing <code>provenance.evidence_label</code>. See the science rules.</li>
+      </ul>
+      <p><span class="done">Done when:</span> someone who hasn't seen the project can say what the selected person needs and why they chose their action, unaided. <strong>This is the first version worth showing people.</strong></p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>6. Live play and player control</h3><span class="tag">3 days on your side</span></header>
+      <p>Mohamed adds <code>stranded_game/serve.py</code>, a WebSocket server on <code>127.0.0.1</code> with a token passed at launch. You connect with Unreal's <code>WebSockets</code> module through <code>FWebSocketsModule</code> and <code>IWebSocket</code>, and build the round menu, action queue and Free Will toggle. The simulation already lets the mind be swapped per person through <code>decide_fn</code> (<code>runtime/simulation.py:111</code>), so this needs no change to physics.</p>
+      <p><span class="done">Done when:</span> with no player input, a live run's actions equal the replay's. Queued actions run in order, and the run is marked as player-directed.</p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>7. Full hazards and Camp view</h3><span class="tag">6 days</span></header>
+      <p>Niagara for ash fall, flows, mudflows, lava, rain, wind and storm, positioned from the fields. Effects can look nice, but where a hazard is must come from the data. Then Camp view, as in the scale note.</p>
+      <p><span class="done">Done when:</span> every hazard in <code>generated_eruption</code> and <code>generated_storm</code> shows at the right place and time, and Camp view changes nothing in the run.</p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>8. Build mode</h3><span class="tag">4 days</span></header>
+      <p>A UMG screen for the existing scenario builder. It sends drafts over the bridge, which applies the rules in <code>entities/draft.py</code> and <code>check.py</code>. Don't copy those rules into C++. It must produce the same TOML scenario files.</p>
+      <p><span class="done">Done when:</span> a scenario built in Unreal also runs from the command line, and the bridge gives the same errors as the old builder.</p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>9. The Titanic</h3><span class="tag">7 days plus the ship model</span></header>
+      <p>A ship that lists and sinks using <code>ship.water_mass</code> and <code>ship.submerged</code>, boats and seats, sea, and night sky. Mohamed extends the exporter for ships and packed crowd data. For the 2,201 people, evaluate Mass Entity with instanced meshes and animation baked to textures, and give only the followed few full skeletons. This approach hasn't been tested.</p>
+      <p><span class="done">Done when:</span> the whole ship plays at 30 frames per second or more on the target PC, and on-screen counts match <code>ship.summary()</code>.</p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>10. Sound and music</h3><span class="tag">2 days</span></header>
+      <p>About five instrumental tracks from ACE-Step: menu, calm, unease, eruption, aftermath. Faded with MetaSounds using <code>eruption.phase</code> and needs. Sound effects come from a CC0 library, because ACE-Step describes itself as a music generator and doesn't list sound effects. It needs Python 3.11 or 3.12 and about 10 GB of models. Check the licence of the model weights on Hugging Face before release, and don't prompt with named artists or The Sims.</p>
+      <p><span class="done">Done when:</span> each loop joins cleanly by ear, and the licence of each sound is listed in <code>CREDITS</code>.</p>
+    </article>
+
+    <article class="phase later">
+      <header><h3>11. Package and ship</h3><span class="tag">4 days</span></header>
+      <p>A Windows build, made with <code>RunUAT BuildCookRun</code>, with Python bundled alongside it. Smoke test on a PC that has never had Python or Unreal on it. Unreal has no simple browser version: Pixel Streaming needs a server, so plan on a download.</p>
+      <p><span class="done">Done when:</span> a stranger can unzip it, play a scenario to the end, and see the evidence banner.</p>
+    </article>
+  </div>
+  <p><strong>Rough total:</strong> Phases 0 to 5 are about three weeks, and everything about ten to twelve weeks for one person, less if you already know Unreal well. The biggest unknowns are art and your PC.</p>
+</section>
+
+<section>
+  <h2>The two formats between Python and Unreal</h2>
+  <h3>Replay file, schema 1</h3>
+  <p>This is the brief Codex is building to, and the checker tests it. Island scenarios only for now.</p>
+<pre><code>{
+  "schema": 1,
+  "scenario": {"id", "title", "place", "step_minutes", "steps", "seed", "t0_local_hour"},
+  "provenance": {"commit", "pack_hash", "verdicts", "evidence_label", "player_directed": false},
+  "grid": {"nx", "ny", "dx_m", "x0_m", "y0_m", "stride"},
+  "terrain": {"elevation": ARRAY, "land": ARRAY},
+  "sites": {"name": [[x_m, y_m]]},
+  "series": {"field name": [one number per step]},
+  "hazards": {"field name": {"changes": [step], "frames": [ARRAY]}},
+  "people": [{"id", "name", "mind", "outcome", "cause", "steps": [{
+      "t", "day", "hour", "minute", "path_m": [[x_m, y_m]], "needs": {}, "stress", "injured", "alive",
+      "event", "action", "probs": {}, "reason", "phase"}]}]
+}
+
+ARRAY = {"dtype": "float32", "rows", "cols", "zlib_b64"}
+        little-endian floats, row 0 at the north edge, zlib, then base64</code></pre>
+  <ul>
+    <li>Arrays are downsampled to 200 cells or fewer a side, which suits hazards but is too coarse for final terrain, so ask for a separate heightmap export in Phase 2.</li>
+    <li>A cell's centre is half a full cell in from the grid's corner. <code>src/replay/replay_data.gd</code> shows the sums.</li>
+    <li>A hazard frame stays in force until the next step listed in <code>changes</code>.</li>
+    <li>The tile position in the old <code>timeline.json</code> and the hazard lists in <code>_hazard_at</code> are too coarse or mostly empty, so don't use them.</li>
+  </ul>
+  <h3>Live messages, proposed for Phase 6</h3>
+  <div class="table"><table>
+    <thead><tr><th>Direction</th><th>Message</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td>Game to bridge</td><td><code>load</code> {scenario, seed, minds}</td><td>Build the scenario. Answers with progress, then the replay header</td></tr>
+      <tr><td>Game to bridge</td><td><code>step</code> {count}</td><td>Advance. Answers with one <code>frame</code> per step, in the replay's format</td></tr>
+      <tr><td>Game to bridge</td><td><code>queue</code> {person, actions}</td><td>Set that person's queue, after checking against <code>ACTIONS</code></td></tr>
+      <tr><td>Game to bridge</td><td><code>free_will</code> {person, on}</td><td>Whether the mind decides when the queue is empty</td></tr>
+      <tr><td>Game to bridge</td><td><code>draft</code> {entities}</td><td>Build mode: returns rule errors and evidence</td></tr>
+      <tr><td>Bridge to game</td><td><code>error</code> {code, message}</td><td>Readable by players. Never a Python traceback</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Tools</h2>
+  <div class="table"><table>
+    <thead><tr><th>Tool</th><th>Use it for</th><th>Watch out for</th></tr></thead>
+    <tbody>
+      <tr><td>Claude Code Game Studios</td><td>Your project's working setup: <code>/art-bible</code>, <code>/asset-spec</code>, <code>/dev-story</code>, <code>/code-review</code>, <code>unreal-specialist</code>, <code>ue-umg-specialist</code>. Code goes in <code>Source/&lt;Module&gt;/</code>.</td><td>49 agents and its own hooks, so keep it out of the team repo. It organises work and writes code, but doesn't make art.</td></tr>
+      <tr><td>godot-mcp</td><td>Nothing on this route. It only drives Godot.</td><td>No Unreal equivalent has been checked. PC Gamer's report on 5.8 mentions an open-standard plugin for LLM systems, so look there first.</td></tr>
+      <tr><td>ACE-Step 1.5</td><td>Music, in Phase 10.</td><td>Its README gives no timings for smaller graphics cards, so try one short track first.</td></tr>
+      <tr><td>Codex</td><td>Well-tested, separate pieces of C++, with one writer per folder.</td><td>Check scenes and art by looking at them, because passing tests won't tell you they look good. On Windows, if <code>codex exec</code> says it's blocked by policy, add <code>-c windows.sandbox=unelevated</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <h2>Art and sound to get</h2>
+  <p class="muted">From a quick search. Confirm the licence on each publisher's own page before you import anything.</p>
+  <div class="table"><table>
+    <thead><tr><th>Need</th><th>First choice</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Stylised characters</td><td>100 Avatars R1 and R2 (Polygonal Mind)</td><td>Reported as CC0, rigged, glTF and FBX. Closest to a Sims-like look at no cost.</td></tr>
+      <tr><td>Fallback characters</td><td>Kenney Animated Characters, Quaternius packs</td><td>Reported as CC0. Kenney is blockier.</td></tr>
+      <tr><td>Realistic characters</td><td>MetaHuman</td><td>Covered by the standard Unreal licence, but it looks realistic rather than Sims-like, and it's demanding to run. Ask Mohamed before choosing this.</td></tr>
+      <tr><td>Animations</td><td>Quaternius sets, Epic's own samples, then Mixamo</td><td>Mixamo is free with an Adobe account, but raw files can't be redistributed, so keep them out of public repos.</td></tr>
+      <tr><td>Island props</td><td>Kenney, Quaternius, Poly Haven, Fab</td><td>Keep one style. Check each pack against the art bible.</td></tr>
+      <tr><td>Titanic</td><td>A simple hull built in Blender, or hire someone</td><td>No suitable free model has been checked yet. It has to tilt, and perhaps split.</td></tr>
+      <tr><td>Our own look</td><td>Logo, mood marker, icons</td><td>Decide the style once, in <code>/art-bible</code>.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="science">
+  <h2>Rules that protect the science</h2>
+  <ul>
+    <li>Don't change <code>contracts.py</code>, gates, pass marks or models to make the game better. CI on the team repo checks gates and generated files.</li>
+    <li>A player-directed run is marked <code>player_directed</code> and can never feed a gate, claim or result.</li>
+    <li>Runs with no player input must equal plain simulation runs. Keep that test forever.</li>
+    <li>Always show the evidence label. The current Titanic is the case that matters: with quantum minds, 3.4% are saved against the real 32.3%, and the classical mind's 33.9% has the wrong breakdown. The ship sinks at 201 minutes against the recorded 160. Those are honest current results, so show them rather than hiding or adjusting them.</li>
+    <li>Quantum minds currently take their most likely option every time, so identical people do identical things, and that will look robotic. A sampling option exists in <code>mind/quantum_mind.py</code>. Using it is Mohamed's decision, and any game result that uses it must say so.</li>
+    <li>In the team repo, avoid <code>plan</code>, <code>risk</code>, <code>role</code> and <code>skill</code> in Markdown file names, and <code>lib/</code> folders, because its <code>.gitignore</code> hides them. Don't push to <code>main</code> unless agreed.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Licence</h2>
+  <p>Read the current Unreal Engine EULA yourself before release, because we couldn't open Epic's licence page while writing this. An Epic licensing page we did read describes a 5% royalty only past US$1 million lifetime gross revenue on a distributed product, and the MetaHuman licence page says MetaHuman falls under the standard Unreal licence.</p>
+</section>
+
+<section>
+  <h2>Questions to settle with Mohamed</h2>
+  <div class="table"><table>
+    <thead><tr><th>Question</th><th>Default if unanswered</th></tr></thead>
+    <tbody>
+      <tr><td>Does your PC meet Epic's recommendation?</td><td>Assume so, but check before Phase 2</td></tr>
+      <tr><td>What's the slowest PC the game must run on?</td><td>Your PC</td></tr>
+      <tr><td>Stylised characters or MetaHuman?</td><td>Stylised</td></tr>
+      <tr><td>Which scenario is the first playable?</td><td><code>generated_eruption</code>: quick to build, and shows an eruption</td></tr>
+      <tr><td>Can game runs use sampled decisions, clearly labelled?</td><td>No. Keep the current rule until Mohamed decides</td></tr>
+      <tr><td>Who makes our logo and character style?</td><td>Free packs and a placeholder logo</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+</body>
+</html>
