@@ -1,0 +1,142 @@
+{
+ "grid": {
+  "dx_m": 100.0,
+  "nx": 4,
+  "ny": 3,
+  "stride": 2,
+  "x0_m": 1000.0,
+  "y0_m": 2000.0
+ },
+ "hazards": {
+  "pdc.active": {
+   "changes": [
+    0,
+    2
+   ],
+   "frames": [
+    {
+     "cols": 4,
+     "dtype": "float32",
+     "rows": 3,
+     "zlib_b64": "eJxjYCANAAAAMAAB"
+    },
+    {
+     "cols": 4,
+     "dtype": "float32",
+     "rows": 3,
+     "zlib_b64": "eJxjYGiwZyABAwDUHAj1"
+    }
+   ]
+  }
+ },
+ "people": [
+  {
+   "cause": "test",
+   "id": 0,
+   "mind": "quantum",
+   "name": "Test",
+   "outcome": "died",
+   "steps": [
+    {
+     "action": "rest",
+     "alive": true,
+     "day": 1,
+     "event": "none",
+     "hour": 8,
+     "injured": false,
+     "minute": 0,
+     "needs": {
+      "hunger": 0.8,
+      "thirst": 0.6
+     },
+     "path_m": [
+      [
+       0.0,
+       0.0
+      ],
+      [
+       10.0,
+       0.0
+      ],
+      [
+       10.0,
+       10.0
+      ]
+     ],
+     "phase": "none",
+     "probs": {
+      "hide": 0.3,
+      "rest": 0.7
+     },
+     "reason": "A test.",
+     "stress": 0.1,
+     "t": 0
+    },
+    {
+     "action": "rest",
+     "alive": false,
+     "day": 1,
+     "event": "none",
+     "hour": 8,
+     "injured": false,
+     "minute": 0,
+     "needs": {
+      "hunger": 0.8,
+      "thirst": 0.6
+     },
+     "path_m": [
+      [
+       10.0,
+       10.0
+      ],
+      [
+       10.0,
+       10.0
+      ]
+     ],
+     "phase": "none",
+     "probs": {
+      "hide": 0.3,
+      "rest": 0.7
+     },
+     "reason": "A test.",
+     "stress": 0.1,
+     "t": 1
+    }
+   ]
+  }
+ ],
+ "provenance": {
+  "commit": null,
+  "evidence_label": "TEST",
+  "pack_hash": "test",
+  "player_directed": false,
+  "verdicts": {}
+ },
+ "scenario": {
+  "id": "tiny",
+  "place": "generated",
+  "seed": 1,
+  "step_minutes": 120,
+  "steps": 4,
+  "t0_local_hour": 8,
+  "title": "Tiny"
+ },
+ "schema": 1,
+ "series": {},
+ "sites": {},
+ "terrain": {
+  "elevation": {
+   "cols": 4,
+   "dtype": "float32",
+   "rows": 3,
+   "zlib_b64": "eJxjYAABBUcGhgVA/AGIFZwYGDyAuACIe4B4ARBvAeITQHzHCQCs5wjg"
+  },
+  "land": {
+   "cols": 4,
+   "dtype": "float32",
+   "rows": 3,
+   "zlib_b64": "eJxjYGiwZyABAwDUHAj1"
+  }
+ }
+}

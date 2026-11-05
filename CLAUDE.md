@@ -5,11 +5,17 @@ Each agent owns a specific domain, enforcing separation of concerns and quality.
 
 ## Technology Stack
 
-- **Engine**: [CHOOSE: Godot 4 / Unity / Unreal Engine 5]
-- **Language**: [CHOOSE: GDScript / C# / C++ / Blueprint]
+- **Engine**: Godot 4.7.2
+- **Language**: GDScript
 - **Version Control**: Git with trunk-based development
-- **Build System**: [SPECIFY after choosing engine]
-- **Asset Pipeline**: [SPECIFY after choosing engine]
+- **Build System**: Godot export templates
+- **Asset Pipeline**: glTF into Godot's importer
+
+## Stranded
+
+This is the 3D game for Stranded. The simulation stays in Python, in the team repo `Muammal/Qiskit-Fest-Qognition`, on branch `game`. This game only reads what `python -m stranded_game.export` writes and holds no simulation rules of its own.
+
+Run the tests with `godot --headless --path . -s tests/run_tests.gd`. Remake their fixture with `tools/make_test_replay.py`.
 
 > **Note**: Engine-specialist agents exist for Godot, Unity, and Unreal with
 > dedicated sub-specialists. Use the set matching your engine.

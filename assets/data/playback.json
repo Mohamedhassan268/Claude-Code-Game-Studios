@@ -1,0 +1,5 @@
+{
+  "default_replay": "res://assets/data/replays/generated_eruption.json",
+  "seconds_per_step": 8.0,
+  "vertical_exaggeration": 2.0
+}
